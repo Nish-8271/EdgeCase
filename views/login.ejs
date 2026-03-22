@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — CP Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d0f11;
+      --surface:  #141618;
+      --surface2: #1c1f22;
+      --border:   #2a2d31;
+      --accent:   #4ade80;
+      --accent2:  #60a5fa;
+      --danger:   #f87171;
+      --text:     #e2e4e8;
+      --muted:    #6b7280;
+      --font-ui:  'DM Sans', sans-serif;
+      --font-mono:'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .logo {
+      font-family: var(--font-mono);
+      color: var(--accent);
+      font-size: 18px;
+      margin-bottom: 24px;
+    }
+
+    .tabs {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 7px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: var(--font-ui);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab.active {
+      background: var(--surface2);
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--font-ui);
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: #555; }
+    input::placeholder { color: var(--muted); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 9px;
+      background: var(--accent);
+      color: #061206;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-ui);
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .divider {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin: 16px 0;
+      position: relative;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 42%;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; }
+
+    .btn-google {
+      width: 100%;
+      padding: 9px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--font-ui);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-google:hover { border-color: #555; }
+
+    .error-msg {
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: -8px;
+      margin-bottom: 10px;
+      min-height: 16px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="card">
+  <div class="logo">cp//</div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+    <button class="tab" id="tab-signup" onclick="switchTab('signup')">Sign up</button>
+  </div>
+
+  <div>
+    <label>Email</label>
+    <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+
+    <p class="error-msg" id="error-msg"></p>
+
+    <button class="btn-primary" id="btn-submit" onclick="handleSubmit()">Login</button>
+
+    <div class="divider">or</div>
+
+    <button class="btn-google" onclick="handleGoogle()">Continue with Google</button>
+  </div>
+</div>
+
+<!-- ── Firebase SDK (must load before your script) ── -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+
+<!-- ── Firebase init using EJS-injected config ── -->
+<script>
+  // firebaseConfig is injected by Express via res.render('login', { firebaseConfig })
+  var firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
+
+  firebase.initializeApp(firebaseConfig);
+  var auth = firebase.auth();
+
+  var mode = 'login';
+
+  function switchTab(tab) {
+    mode = tab;
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+    document.getElementById('btn-submit').textContent = tab === 'login' ? 'Login' : 'Create account';
+    document.getElementById('error-msg').textContent = '';
+  }
+
+  async function handleSubmit() {
+    var email    = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value;
+    var btn      = document.getElementById('btn-submit');
+    var errEl    = document.getElementById('error-msg');
+
+    if (!email || !password) {
+      errEl.textContent = 'Please fill in all fields.';
+      return;
+    }
+
+    btn.disabled = true;
+    errEl.textContent = '';
+
+    try {
+      var credential;
+      if (mode === 'login') {
+        credential = await auth.signInWithEmailAndPassword(email, password);
+      } else {
+        credential = await auth.createUserWithEmailAndPassword(email, password);
+      }
+      await saveTokenAndRedirect(credential.user);
+    } catch (err) {
+      errEl.textContent = friendlyError(err.code);
+      btn.disabled = false;
+    }
+  }
+
+  async function handleGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    try {
+      var credential = await auth.signInWithPopup(provider);
+      await saveTokenAndRedirect(credential.user);
+    } catch (err) {
+      document.getElementById('error-msg').textContent = friendlyError(err.code);
+    }
+  }
+
+  async function saveTokenAndRedirect(user) {
+    var token = await user.getIdToken();
+    var res = await fetch('/auth/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token }),
+    });
+    var data = await res.json();
+    if (data.success) {
+      window.location.href = '/problems';
+    } else {
+      document.getElementById('error-msg').textContent = 'Session error. Please try again.';
+    }
+  }
+
+  function friendlyError(code) {
+    var map = {
+      'auth/user-not-found':       'No account with that email.',
+      'auth/wrong-password':       'Incorrect password.',
+      'auth/invalid-credential':   'Invalid email or password.',
+      'auth/email-already-in-use': 'An account with this email already exists.',
+      'auth/weak-password':        'Password must be at least 6 characters.',
+      'auth/invalid-email':        'Invalid email address.',
+      'auth/popup-closed-by-user': 'Google sign-in was cancelled.',
+      'auth/too-many-requests':    'Too many attempts. Please try again later.',
+    };
+    return map[code] || ('Something went wrong: ' + code);
+  }
+</script>
+
+</body>
+</html>

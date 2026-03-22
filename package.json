@@ -1,0 +1,25 @@
+{
+  "name": "edgecase",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.3.1",
+    "dotnet": "^1.1.4",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "firebase-admin": "^13.7.0",
+    "nodemon": "^3.1.14",
+    "path": "^0.12.7"
+  }
+}
