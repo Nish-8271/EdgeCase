@@ -40,6 +40,7 @@ async function getAllProblems({ tags = [], minRating, maxRating, page = 1, limit
 
 async function getProblemById(problemId) {
   // problemId format: "1234A" → contestId=1234, index="A"
+  
   const match = problemId.match(/^(\d+)([A-Z]\d*)$/i);
   if (!match) throw new Error('Invalid problem ID format. Expected e.g. "1234A"');
  

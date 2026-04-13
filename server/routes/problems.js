@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 
     // tags can come as ?tags=dp&tags=greedy → always array
     const tagsArr = Array.isArray(tags) ? tags : tags ? [tags] : [];
-    console.log('Received query:', { tags: tagsArr, minRating, maxRating, page });
+    // console.log('Received query:', { tags: tagsArr, minRating, maxRating, page });
     const { problems, total, totalPages } = await problemService.getAllProblems({
       tags:      tagsArr,
       minRating,
@@ -53,8 +53,8 @@ router.get('/', async (req, res) => {
 
 router.get('/:problemId', async (req, res) => {
   try {
-    const problem = await problemService.getProblemById(req.params.problemId);
-    console.log('Fetched problem:', problem);
+    const problemId = req.params.problemId.replace('-',''); // Convert "1234-A" to "1234/A"
+    const problem = await problemService.getProblemById(problemId);
     return res.render('editor', {
       problem,
       user: req.user || null,
