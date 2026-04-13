@@ -1,11 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Problems — CP Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d0f11;
+      --surface:  #141618;
+      --surface2: #1c1f22;
+      --border:   #2a2d31;
+      --accent:   #4ade80;
+      --accent2:  #60a5fa;
+      --warn:     #fbbf24;
+      --danger:   #f87171;
+      --text:     #e2e4e8;
+      --muted:    #6b7280;
+      --font-ui:  'DM Sans', sans-serif;
+      --font-mono:'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 24px;
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .nav-link {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link.active { color: var(--text); font-weight: 500; }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-badge {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    .btn-link {
+      font-size: 12px;
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    .btn-link:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .total-count {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Filters ── */
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .filter-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      padding: 6px 10px;
+      outline: none;
+      font-family: var(--font-ui);
+      transition: border-color 0.15s;
+      width: 120px;
+    }
+    .filter-input:focus { border-color: #555; }
+
+    .filter-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      padding: 6px 10px;
+      outline: none;
+      font-family: var(--font-ui);
+      min-width: 160px;
+      height: 32px;
+    }
+
+    .btn-filter {
+      padding: 6px 18px;
+      background: var(--accent);
+      color: #061206;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      transition: opacity 0.15s;
+      height: 32px;
+    }
+    .btn-filter:hover { opacity: 0.88; }
+
+    .btn-reset {
+      padding: 6px 14px;
+      background: none;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      height: 32px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-reset:hover { color: var(--text); border-color: #555; }
+
+    /* Active tag pills */
+    .active-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .tag-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      background: rgba(96, 165, 250, 0.1);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--accent2);
+    }
+
+    .tag-pill button {
+      background: none;
+      border: none;
+      color: var(--accent2);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      opacity: 0.7;
+    }
+    .tag-pill button:hover { opacity: 1; }
+
+    /* ── Problem table ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+      cursor: pointer;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+
+    td {
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+
+    .problem-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      width: 80px;
+    }
+
+    .problem-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .problem-name a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .problem-name a:hover { color: var(--accent2); }
+
+    .problem-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tag {
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .rating {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      width: 70px;
+    }
+
+    .rating-800  { color: #9e9e9e; }
+    .rating-900  { color: #9e9e9e; }
+    .rating-1000 { color: #9e9e9e; }
+    .rating-1100 { color: #9e9e9e; }
+    .rating-1200 { color: #4ade80; }
+    .rating-1300 { color: #4ade80; }
+    .rating-1400 { color: #4ade80; }
+    .rating-1500 { color: #60a5fa; }
+    .rating-1600 { color: #60a5fa; }
+    .rating-1700 { color: #60a5fa; }
+    .rating-1800 { color: #c084fc; }
+    .rating-1900 { color: #c084fc; }
+    .rating-2000 { color: #fbbf24; }
+    .rating-2100 { color: #fbbf24; }
+    .rating-2200 { color: #fbbf24; }
+    .rating-2300 { color: #f87171; }
+    .rating-2400 { color: #f87171; }
+    .rating-2500 { color: #f87171; }
+    .rating-high { color: #f87171; }
+
+    .solved-count {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      width: 90px;
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      padding: 5px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: var(--font-ui);
+    }
+    .page-btn:hover { border-color: #555; }
+    .page-btn.active {
+      background: var(--accent);
+      color: #061206;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+    .page-btn.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .empty-state {
+      padding: 48px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
 </head>
+
 <body>
-    <h1>Hello World</h1>
+
+<!-- ── Topbar ── -->
+<header class="topbar">
+  <a href="/" class="logo">cp//</a>
+  <a href="/problems" class="nav-link active">Problems</a>
+  <a href="/playground" class="nav-link">Playground</a>
+
+  <div class="topbar-right">
+    <% if (user) { %>
+      <span class="user-badge"><%= user.email %></span>
+      <a href="/auth/logout" class="btn-link" style="color: var(--muted); font-size:11px;">logout</a>
+    <% } else { %>
+      <a href="/user/login" class="btn-link">Login</a>
+    <% } %>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Problems</h1>
+    <span class="total-count"><%= total %> problems</span>
+  </div>
+
+  <!-- ── Filters ── -->
+  <form class="filters" method="GET" action="/problems">
+    <div class="filter-group">
+      <span class="filter-label">Min rating</span>
+      <input
+        class="filter-input"
+        type="number"
+        name="minRating"
+        placeholder="800"
+        min="800" max="3500" step="100"
+        value="<%= minRating %>"
+      />
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Max rating</span>
+      <input
+        class="filter-input"
+        type="number"
+        name="maxRating"
+        placeholder="3500"
+        min="800" max="3500" step="100"
+        value="<%= maxRating %>"
+      />
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Tag</span>
+      <select class="filter-select" name="tags" onchange="this.form.submit()">
+        <option value="">All tags</option>
+        <% allTags.forEach(function(tag) { %>
+          <option value="<%= tag %>" <%= selectedTags.includes(tag) ? 'selected' : '' %>>
+            <%= tag %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <button type="submit" class="btn-filter">Filter</button>
+    <a href="/problems" class="btn-reset">Reset</a>
+  </form>
+
+  <!-- Active tag pills -->
+  <% if (selectedTags.length > 0) { %>
+    <div class="active-tags">
+      <% selectedTags.forEach(function(tag) { %>
+        <span class="tag-pill">
+          <%= tag %>
+          <button onclick="removeTag('<%= tag %>')" title="Remove">✕</button>
+        </span>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <!-- ── Problem table ── -->
+  <div class="table-wrap">
+    <% if (problems.length === 0) { %>
+      <div class="empty-state">No problems found for the selected filters.</div>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Problem</th>
+            <th>Tags</th>
+            <th>Rating</th>
+            <th>Solved</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% problems.forEach(function(problem) { %>
+            <tr onclick="window.location='/problems/<%= problem.id %>'">
+
+              <td class="problem-id"><%= problem.id %></td>
+
+              <td class="problem-name">
+                <a href="/problems/<%= problem.id %>" onclick="event.stopPropagation()">
+                  <%= problem.name %>
+                </a>
+              </td>
+
+              <td>
+                <div class="problem-tags">
+                  <% problem.tags.slice(0, 3).forEach(function(tag) { %>
+                    <span class="tag"><%= tag %></span>
+                  <% }) %>
+                  <% if (problem.tags.length > 3) { %>
+                    <span class="tag">+<%= problem.tags.length - 3 %></span>
+                  <% } %>
+                </div>
+              </td>
+
+              <td>
+                <% if (problem.rating) { %>
+                  <%
+                    var r = problem.rating;
+                    var rClass = r >= 2500 ? 'rating-high'
+                               : 'rating-' + r;
+                  %>
+                  <span class="rating <%= rClass %>"><%= problem.rating %></span>
+                <% } else { %>
+                  <span class="rating" style="color: var(--muted);">—</span>
+                <% } %>
+              </td>
+
+            
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <!-- ── Pagination ── -->
+  <% if (totalPages > 1) { %>
+    <div class="pagination">
+
+      <a
+        href="?page=<%= currentPage - 1 %>&minRating=<%= minRating %>&maxRating=<%= maxRating %><% selectedTags.forEach(t => { %>&tags=<%= t %><% }) %>"
+        class="page-btn <%= currentPage <= 1 ? 'disabled' : '' %>"
+      >← Prev</a>
+
+      <%
+        var start = Math.max(1, currentPage - 2);
+        var end   = Math.min(totalPages, currentPage + 2);
+      %>
+
+      <% if (start > 1) { %>
+        <a href="?page=1&minRating=<%= minRating %>&maxRating=<%= maxRating %><% selectedTags.forEach(t => { %>&tags=<%= t %><% }) %>" class="page-btn">1</a>
+        <% if (start > 2) { %><span style="color:var(--muted)">…</span><% } %>
+      <% } %>
+
+      <% for (var i = start; i <= end; i++) { %>
+        <a
+          href="?page=<%= i %>&minRating=<%= minRating %>&maxRating=<%= maxRating %><% selectedTags.forEach(t => { %>&tags=<%= t %><% }) %>"
+          class="page-btn <%= i === currentPage ? 'active' : '' %>"
+        ><%= i %></a>
+      <% } %>
+
+      <% if (end < totalPages) { %>
+        <% if (end < totalPages - 1) { %><span style="color:var(--muted)">…</span><% } %>
+        <a href="?page=<%= totalPages %>&minRating=<%= minRating %>&maxRating=<%= maxRating %><% selectedTags.forEach(t => { %>&tags=<%= t %><% }) %>" class="page-btn"><%= totalPages %></a>
+      <% } %>
+
+      <a
+        href="?page=<%= currentPage + 1 %>&minRating=<%= minRating %>&maxRating=<%= maxRating %><% selectedTags.forEach(t => { %>&tags=<%= t %><% }) %>"
+        class="page-btn <%= currentPage >= totalPages ? 'disabled' : '' %>"
+      >Next →</a>
+
+    </div>
+  <% } %>
+
+</div><!-- /.container -->
+
+<script>
+  // Remove a tag from active filters
+  function removeTag(tag) {
+    var params = new URLSearchParams(window.location.search);
+    var tags   = params.getAll('tags').filter(function(t) { return t !== tag; });
+    params.delete('tags');
+    tags.forEach(function(t) { params.append('tags', t); });
+    params.set('page', '1');
+    window.location.search = params.toString();
+  }
+</script>
+
 </body>
 </html>

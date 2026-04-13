@@ -9,7 +9,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const authMiddleware = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
-
+const problemsRoutes=require('./routes/problems');
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -36,9 +36,7 @@ app.get('/user/login', (req, res) => {
   });
 });
 
-app.get('/problems', (req, res) => {
-    res.render('problems');
-});
+app.use('/problems', problemsRoutes);
 
 app.get('/', (req, res) => {
     res.render('home');
