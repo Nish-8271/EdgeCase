@@ -37,7 +37,7 @@ app.get('/user/login', (req, res) => {
 });
 
 app.use('/problems', problemsRoutes);
-
+app.use('/execute', require('./routes/execute'));
 app.get('/', (req, res) => {
     res.render('home');
 });

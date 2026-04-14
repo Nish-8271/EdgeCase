@@ -16,27 +16,27 @@
           <a class="nav-link active" aria-current="page" href="/editor">Editor</a>
         </li>
         <% if (locals.user) { %>
-              <li class="nav-item">
-          <a class="nav-link" href="/blog/add-new">Add Blog</a>
+           <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/problems">Problems</a>
         </li>
+              
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <%= user.name %>
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/user/logout" >Logout</a></li>
+           
             
           </ul>
         </li>
         <% } else {%>
           <li class="nav-item">
-          <a class="nav-link" href="/problems">Problems</a>
-        </li>
-           <li class="nav-item">
-          <a class="nav-link" href="/user/signup">Create Account</a>
+          <a class="nav-link active" aria-current="page" href="/problems">Problems</a>
+          
         </li>
          <li class="nav-item">  
-          <a class="nav-link" href="/user/login">Login</a>
+          <a class="nav-link" href="/user/login">Login/Create Account</a>
         </li>
           <% } %>
 
