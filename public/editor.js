@@ -263,7 +263,7 @@ async function handleAnalyze() {
   setAIPanelLoading("Analyzing your code...");
 
   try {
-    const res = await fetch("/analyze", {
+    const res = await fetch("/api/analyze-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, language: state.language }),
@@ -272,7 +272,7 @@ async function handleAnalyze() {
     const data = await res.json();
 
     if (!res.ok) {
-      setAIPanelError(data.error || "Analysis failed.");
+      setAIPanelError(data.error || "Analysis failed. Try again.");
       return;
     }
 

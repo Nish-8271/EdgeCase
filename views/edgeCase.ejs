@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Test Generator</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg:#0d0f11;
+      --surface:#141618;
+      --border:#2a2d31;
+      --accent:#4ade80;
+      --text:#e2e4e8;
+      --muted:#6b7280;
+      --font-ui:'DM Sans', sans-serif;
+      --font-mono:'JetBrains Mono', monospace;
+    }
+
+    body {
+      margin:0;
+      font-family:var(--font-ui);
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    /* ── Topbar (same as homepage) ── */
+    .topbar {
+      display:flex;
+      align-items:center;
+      gap:20px;
+      padding:0 28px;
+      height:50px;
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+    }
+
+    .logo {
+      font-family:var(--font-mono);
+      color:var(--accent);
+      text-decoration:none;
+      font-size:15px;
+    }
+
+    .nav-link {
+      color:var(--muted);
+      text-decoration:none;
+      font-size:13px;
+    }
+
+    .nav-link:hover { color:var(--text); }
+
+    .topbar-right {
+      margin-left:auto;
+      display:flex;
+      gap:10px;
+    }
+
+    .btn {
+      padding:6px 12px;
+      border-radius:6px;
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--text);
+      text-decoration:none;
+      font-size:12px;
+    }
+
+    .btn.primary {
+      background:var(--accent);
+      color:#061206;
+      border:none;
+    }
+
+    /* ── Main container ── */
+    .container {
+      max-width:800px;
+      margin:60px auto;
+      padding:0 20px;
+    }
+
+    h2 {
+      margin-bottom:10px;
+      font-weight:500;
+    }
+
+    .subtitle {
+      color:var(--muted);
+      margin-bottom:20px;
+      font-size:14px;
+    }
+
+    textarea {
+      width:100%;
+      height:220px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:12px;
+      border-radius:8px;
+      font-family:var(--font-mono);
+      font-size:13px;
+    }
+
+    textarea:focus {
+      outline:none;
+      border-color:var(--accent);
+    }
+
+    .actions {
+      margin-top:12px;
+    }
+
+    button {
+      padding:10px 20px;
+      border:none;
+      border-radius:8px;
+      background:var(--accent);
+      color:#061206;
+      font-weight:500;
+      cursor:pointer;
+    }
+
+    button:hover {
+      opacity:0.9;
+    }
+
+    .error {
+      color:#f87171;
+      margin-top:10px;
+    }
+
+    /* ── Result box ── */
+    .result-box {
+      margin-top:25px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:15px;
+    }
+
+    pre {
+      white-space:pre-wrap;
+      font-family:var(--font-mono);
+      font-size:13px;
+      color:#d1d5db;
+    }
+
+    .login-msg {
+      color:#f87171;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Topbar ── -->
+<header class="topbar">
+  <a href="/" class="logo">cp//</a>
+  <a href="/problems" class="nav-link">Problems</a>
+  <a href="/editor" class="nav-link">Playground</a>
+
+  <div class="topbar-right">
+    <% if (user) { %>
+      <span class="btn"><%= user.email %></span>
+      <a href="/auth/logout" class="btn">Logout</a>
+    <% } else { %>
+      <a href="/user/login" class="btn">Login</a>
+      <a href="/user/login" class="btn primary">Sign up</a>
+    <% } %>
+  </div>
+</header>
+
+<!-- ── Main ── -->
+<div class="container">
+
+  <h2>AI Test Case Generator</h2>
+  <p class="subtitle">
+    Paste your problem statement and generate edge & tricky test cases instantly.
+  </p>
+
+  <% if (!user) { %>
+
+    <p class="login-msg">⚠ Please login to use this feature.</p>
+
+  <% } else { %>
+
+    <form method="POST" action="/test/generate">
+      <textarea name="problem" placeholder="Paste full problem statement here..." required></textarea>
+
+      <div class="actions">
+        <button type="submit">Generate Test Cases</button>
+      </div>
+    </form>
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <% if (result) { %>
+      <div class="result-box">
+        <h3>Generated Test Cases</h3>
+        <pre><%= result %></pre>
+      </div>
+    <% } %>
+
+  <% } %>
+
+</div>
+
+</body>
+</html>

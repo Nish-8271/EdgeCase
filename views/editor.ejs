@@ -486,7 +486,7 @@
 
   <!-- ─── Topbar ─────────────────────────────────────────── -->
   <header class="topbar">
-    <span class="topbar-logo">cp//</span>
+    <a href="\" class="topbar-logo">cp//</a>
 
     <% if (problem) { %>
       <span class="problem-name"><%= problem.name %></span>
@@ -538,7 +538,7 @@
       <% if (user) { %>
         <button class="btn" id="btn-submit">Submit</button>
         <div class="sep"></div>
-        <button class="btn" id="btn-analyze">AI Analyze</button>
+        <button class="btn" id="btn-analyze">Analyze Code</button>
         <button class="btn" id="btn-gen-tests">Gen Tests</button>
       <% } %>
 
@@ -601,7 +601,10 @@
 <div id="toast-container"></div>
 
 <!-- ─── Inject server-side state for editor.js ───────────── -->
-
+<script>
+  window.__USER__ = <%= user ? 'true' : 'false' %>;
+  window.__PROBLEM_ID__ = <%- problem ? `'${problem.id}'` : 'null' %>;
+</script>
 
 <!-- ─── Your editor.js ──────────────────────────────────── -->
 <script src="/editor.js"></script>

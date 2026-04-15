@@ -12,14 +12,18 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bootstrap": "^5.3.8",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.3.1",
     "dotnet": "^1.1.4",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.2",
     "firebase-admin": "^13.7.0",
+    "helmet": "^8.1.0",
     "nodemon": "^3.1.14",
+    "openai": "^6.34.0",
     "path": "^0.12.7",
     "uuid": "^13.0.0"
   }

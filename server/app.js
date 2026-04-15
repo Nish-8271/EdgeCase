@@ -7,9 +7,11 @@ dotenv.config({
 });
 const app = express();
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const authMiddleware = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
 const problemsRoutes=require('./routes/problems');
+app.use(helmet({ contentSecurityPolicy: false })); // Exclude CSP so our Monaco CDN fonts don't strictly break
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -35,16 +37,21 @@ app.get('/user/login', (req, res) => {
     }
   });
 });
-
+const indexRoutes=require('./routes/index');
 app.use('/problems', problemsRoutes);
 app.use('/execute', require('./routes/execute'));
-app.get('/', (req, res) => {
-    res.render('home');
-});
+app.get('/',indexRoutes);
+const testRoutes=require('./routes/test');
+app.use('/test',testRoutes);
+
+const apiRoutes = require('./routes/api');
+app.use('/api', apiRoutes);
 
 app.get('/editor', (req, res) => {
-    res.render('editor',{user:null,
-        problem:null});
+    res.render('editor', {
+        user: req.user || null,
+        problem: null
+    });
 });
 
 module.exports = app;

@@ -11,6 +11,13 @@ const cache = {
   lastFetched: null,
   TTL:        1000 * 60 * 30,  // 30 minutes
 };
+// Cache2 for allcontests
+const contestCache={
+    contests:null,
+    lastFetched:null,
+    TTL:1000*60*60, // 60 minutes
+};
+
 // get All Problems
 async function getAllProblems({ tags = [], minRating, maxRating, page = 1, limit = 50 } = {}){
 
@@ -99,6 +106,7 @@ function filterAndPaginate(problems,{tags,minRating,maxRating,page,limit}){
     const items=filtered.slice(start,end);
     return {problems:items,total,totalPages,page,limit};
 }
+// Filtering contests on the basis of timeline and divisions
 
 
 // Simple https GET request wrapper for Codeforces API->return parsed JSON

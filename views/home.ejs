@@ -1,13 +1,754 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('./partials/head') %>
-    <title>Document</title>
-</head>
-<body>
-    <%- include('./partials/nav') %>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CP Platform — Competitive Programming</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <%- include('./partials/script') %>
+    :root {
+      --bg:       #0d0f11;
+      --surface:  #141618;
+      --surface2: #1c1f22;
+      --border:   #2a2d31;
+      --accent:   #4ade80;
+      --accent2:  #60a5fa;
+      --warn:     #fbbf24;
+      --danger:   #f87171;
+      --text:     #e2e4e8;
+      --muted:    #6b7280;
+      --font-ui:  'DM Sans', sans-serif;
+      --font-mono:'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 0 28px;
+      height: 50px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--accent);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      margin-right: 8px;
+    }
+
+    .nav-link {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-badge {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    .btn-nav {
+      font-size: 12px;
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-nav.primary { background: var(--accent);  color: #061206; font-weight: 500; }
+    .btn-nav.ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-nav:hover   { opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 72px 28px 48px;
+      text-align: center;
+    }
+
+    .hero-label {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      border: 1px solid rgba(74,222,128,0.3);
+      background: rgba(74,222,128,0.06);
+      padding: 3px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title span { color: var(--accent); }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font-ui);
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-hero:active { transform: scale(0.97); }
+    .btn-hero.primary { background: var(--accent);  color: #061206; }
+    .btn-hero.ghost   { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-hero:hover   { opacity: 0.88; }
+
+    /* ── Stats strip ── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      margin-bottom: 56px;
+    }
+
+    .stat {
+      flex: 1;
+      max-width: 200px;
+      padding: 20px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ── Main content ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 28px 60px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .section-sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .section-link {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    .section-link:hover { text-decoration: underline; }
+
+    /* ── Contest cards ── */
+    .contests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .contest-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .contest-card:hover {
+      border-color: #3a3d41;
+      transform: translateY(-2px);
+    }
+
+    /* Live glow on left edge */
+    .contest-card.live {
+      border-left: 3px solid var(--accent);
+    }
+    .contest-card.live::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, rgba(74,222,128,0.04) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .contest-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .contest-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .contest-type {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .type-CF   { color: var(--accent2); border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.06); }
+    .type-ICPC { color: var(--warn);    border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.06); }
+    .type-IOI  { color: var(--accent);  border-color: rgba(74,222,128,0.3);  background: rgba(74,222,128,0.06); }
+
+    .contest-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .meta-icon {
+      font-size: 13px;
+      opacity: 0.6;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .time-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--warn);
+    }
+
+    .contest-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-register {
+      flex: 1;
+      padding: 7px 0;
+      background: var(--accent);
+      color: #061206;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--font-ui);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-register:hover { opacity: 0.88; }
+
+    .btn-view {
+      padding: 7px 14px;
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: var(--font-ui);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-view:hover { border-color: #555; }
+
+    .btn-join {
+      flex: 1;
+      padding: 7px 0;
+      background: rgba(74,222,128,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(74,222,128,0.3);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--font-ui);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-join:hover { background: rgba(74,222,128,0.18); }
+
+    /* ── Trending Cards ── */
+    .trending-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .trending-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.15s, transform 0.15s;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .trending-card:hover {
+      border-color: #3a3d41;
+      transform: translateY(-2px);
+    }
+    .trending-card-title {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .trending-card-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .trending-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .trending-card-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent2);
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    /* ── Feature cards ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .feature-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .feature-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Countdown timer ── */
+    .countdown {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--warn);
+      letter-spacing: 0.04em;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Topbar ── -->
+<header class="topbar">
+  <a href="/" class="logo">cp//</a>
+  <a href="/problems" class="nav-link">Problems</a>
+  <a href="/editor" class="nav-link">Playground</a>
+
+  <div class="topbar-right">
+    <% if (user) { %>
+      <span class="user-badge"><%= user.email %></span>
+      <a href="/auth/logout" class="btn-nav ghost" style="font-size:11px;">logout</a>
+    <% } else { %>
+      <a href="/user/login" class="btn-nav ghost">Login</a>
+      <a href="/user/login" class="btn-nav primary">Sign up</a>
+    <% } %>
+  </div>
+</header>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-label">Powered by Codeforces</div>
+  <h1 class="hero-title">
+    Code. <span>Compete.</span> Improve.
+  </h1>
+  <p class="hero-sub">
+    A competitive programming platform with sandboxed code execution,
+    AI-powered test case generation, and real-time contest tracking.
+  </p>
+  <div class="hero-actions">
+    <a href="/problems" class="btn-hero ghost">Browse Problems</a>
+    <a href="/editor" class="btn-hero ghost">Try Playground</a>
+    <a href="/test" class="btn-hero ghost">Generate Edge Cases</a>
+
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-value">9000+</div>
+    <div class="stat-label">Problems</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">5</div>
+    <div class="stat-label">Languages</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">AI</div>
+    <div class="stat-label">Test Generator</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value"><%= contests.filter(c => c.isLive).length || '–' %></div>
+    <div class="stat-label">Live Now</div>
+  </div>
+</div>
+
+<!-- ── Contests ── -->
+<div class="container">
+
+  <div class="section-header">
+    <h2 class="section-title">Upcoming Contests</h2>
+    <span class="section-sub"><%= contests.length %> scheduled</span>
+    <a href="https://codeforces.com/contests" target="_blank" class="section-link">
+      View all on Codeforces →
+    </a>
+  </div>
+
+  <% if (contests.length === 0) { %>
+    <div class="empty-state">
+      No upcoming contests found. Check back soon or
+      <a href="https://codeforces.com/contests" target="_blank" style="color: var(--accent2);">visit Codeforces</a>.
+    </div>
+  <% } else { %>
+    <div class="contests-grid">
+      <% contests.forEach(function(contest) { %>
+        <div class="contest-card <%= contest.isLive ? 'live' : '' %>">
+
+          <div class="contest-card-top">
+            <span class="contest-name"><%= contest.name %></span>
+            <span class="contest-type type-<%= contest.type %>"><%= contest.type %></span>
+          </div>
+
+          <div class="contest-meta">
+            <% if (contest.isLive) { %>
+              <span class="live-badge">
+                <span class="live-dot"></span>
+                Live now
+              </span>
+            <% } else { %>
+              <span class="meta-item">
+                <span class="meta-icon">🕐</span>
+                <span
+                  class="countdown"
+                  data-start="<%= contest.startTimeSeconds %>"
+                ><%= contest.relativeTime %></span>
+              </span>
+            <% } %>
+
+            <span class="meta-item">
+              <span class="meta-icon">⏱</span>
+              <span><%= contest.duration %></span>
+            </span>
+
+            <% if (contest.startTime) { %>
+              <span class="meta-item">
+                <span class="meta-icon">📅</span>
+                <span>
+                  <%= new Date(contest.startTime).toLocaleDateString('en-IN', {
+                    month: 'short', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                  }) %>
+                </span>
+              </span>
+            <% } %>
+          </div>
+
+          <div class="contest-actions">
+            <% if (contest.isLive) { %>
+              <a href="<%= contest.contestUrl %>" target="_blank" class="btn-join">
+                Join Contest →
+              </a>
+            <% } else { %>
+              <a href="<%= contest.registerUrl %>" target="_blank" class="btn-register">
+                Register
+              </a>
+            <% } %>
+            <a href="<%= contest.contestUrl %>" target="_blank" class="btn-view">
+              View
+            </a>
+          </div>
+
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <!-- ── Trending Dev News ── -->
+  <div class="section-header" style="margin-top: 16px;">
+    <h2 class="section-title">Trending Developer News</h2>
+    <span class="section-sub">Top articles of the day from Dev.to</span>
+  </div>
+
+  <% if (devNews && devNews.length > 0) { %>
+    <div class="trending-grid">
+      <% devNews.forEach(function(article) { %>
+        <a href="<%= article.url %>" target="_blank" class="trending-card">
+          <div class="trending-card-title"><%= article.title %></div>
+          <div class="trending-card-tags">
+            <% article.tags.slice(0, 3).forEach(function(tag) { %>
+              <span class="trending-card-tag">#<%= tag %></span>
+            <% }) %>
+          </div>
+          <div class="trending-card-meta">
+            <span>By <%= article.author %></span>
+            <span><%= article.readingTime %> min read</span>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty-state" style="margin-bottom: 48px;">
+      Couldn't fetch trending news right now.
+    </div>
+  <% } %>
+
+  <!-- ── GitHub Trending ── -->
+  <div class="section-header">
+    <h2 class="section-title">Trending GitHub Repositories</h2>
+    <span class="section-sub">Most starred repositories this week</span>
+  </div>
+
+  <% if (githubRepos && githubRepos.length > 0) { %>
+    <div class="trending-grid">
+      <% githubRepos.forEach(function(repo) { %>
+        <a href="<%= repo.url %>" target="_blank" class="trending-card">
+          <div class="trending-card-title" style="color: var(--accent);"><%= repo.fullName %></div>
+          <div style="font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px;">
+            <%= repo.description ? repo.description : 'No description available.' %>
+          </div>
+          <div class="trending-card-meta">
+            <span>⭐ <%= repo.stars.toLocaleString() %></span>
+            <span><%= repo.language ? repo.language : 'Multiple' %></span>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty-state" style="margin-bottom: 48px;">
+      Couldn't fetch GitHub trending repos right now.
+    </div>
+  <% } %>
+
+  <!-- ── Features ── -->
+  <div class="section-header" style="margin-top: 16px;">
+    <h2 class="section-title">Features</h2>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Sandboxed Execution</div>
+      <div class="feature-desc">Run C++, Python, Java, C, and Rust in isolated Docker containers with memory and CPU limits.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title">AI Test Generator</div>
+      <div class="feature-desc">Generate edge cases before you submit — catch wrong answers before they cost you rating points.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">9000+ Problems</div>
+      <div class="feature-desc">Browse the full Codeforces problem set filtered by rating, tags, and difficulty.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">Contest Tracker</div>
+      <div class="feature-desc">Never miss an upcoming Codeforces contest — register directly from this page.</div>
+    </div>
+  </div>
+
+</div><!-- /.container -->
+
+<script>
+  // Live countdown timers — updates every minute
+  function updateCountdowns() {
+    document.querySelectorAll('.countdown[data-start]').forEach(function(el) {
+      var startMs = parseInt(el.dataset.start) * 1000;
+      var diff    = startMs - Date.now();
+
+      if (diff <= 0) {
+        el.textContent = 'Starting now';
+        return;
+      }
+
+      var days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+      var hours   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      if (days > 0)         el.textContent = 'in ' + days + 'd ' + hours + 'h';
+      else if (hours > 0)   el.textContent = 'in ' + hours + 'h ' + minutes + 'm';
+      else if (minutes > 0) el.textContent = 'in ' + minutes + 'm ' + seconds + 's';
+      else                  el.textContent = 'in ' + seconds + 's';
+    });
+  }
+
+  updateCountdowns();
+  setInterval(updateCountdowns, 1000);  // update every second for accuracy
+</script>
 
 </body>
 </html>
