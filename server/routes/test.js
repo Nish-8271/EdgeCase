@@ -5,7 +5,7 @@ const aiRateLimiter = require('../middleware/aiRateLimiter');
 
 // This route is just for testing the AI-generated edge cases feature
 router.get('/', (req, res) => {
-    console.log('Accessing /test route');
+    
     if(!req.user){
         return res.redirect('/user/login');
     }
