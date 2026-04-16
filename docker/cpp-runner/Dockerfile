@@ -5,4 +5,4 @@ WORKDIR /code
 RUN useradd -m sandbox
 USER sandbox
 
-CMD ["sh", "-c", "g++ -O2 -o /tmp/solution /code/solution.cpp && /tmp/solution"]
+CMD ["sh", "-c", "g++ -O1 -o /tmp/solution /code/solution.cpp && /tmp/solution"]

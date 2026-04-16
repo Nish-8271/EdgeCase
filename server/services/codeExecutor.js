@@ -20,9 +20,10 @@ const LANG_CONFIG = {
 // ─── Execution limits ─────────────────────────────────────────────────────────
 
 const LIMITS = {
-  timeoutMs: 10000,   // 10 seconds
-  memory:    '128m',
-  cpus:      '0.5',
+  timeoutMsInterpreted: 10000,   // 10s for Python
+  timeoutMsCompiled:    15000,   // 15s for C++, Java, Rust (includes compile time)
+  memory:    '512m',             // Increased from 128m to handle g++/rustc
+  cpus:      '1.0',              // Increased from 0.5
 };
 
 // ─── Main export ──────────────────────────────────────────────────────────────
@@ -43,7 +44,10 @@ async function executeCode({ code, language, input = '' }) {
   const startTime = Date.now();
 
   try {
-    const result = await runContainer({ config, tmpDir, runId });
+    const isCompiled = ['cpp', 'c', 'java', 'rust'].includes(language);
+    const timeout = isCompiled ? LIMITS.timeoutMsCompiled : LIMITS.timeoutMsInterpreted;
+    
+    const result = await runContainer({ config, tmpDir, runId, timeout });
     result.executionTime = Date.now() - startTime;
     return result;
   } finally {
@@ -54,7 +58,7 @@ async function executeCode({ code, language, input = '' }) {
 
 // ─── Docker runner ────────────────────────────────────────────────────────────
 
-function runContainer({ config, tmpDir, runId }) {
+function runContainer({ config, tmpDir, runId, timeout }) {
   return new Promise((resolve) => {
 
     const mountPath = tmpDir.replace(/\\/g, '/').replace(/^([A-Z]):/, (_, d) => `/${d.toLowerCase()}`);
@@ -111,7 +115,7 @@ function runContainer({ config, tmpDir, runId }) {
           exitCode: null,
         });
       }
-    }, LIMITS.timeoutMs);
+    }, timeout);
 
     // On exit
     proc.on('close', (code) => {
