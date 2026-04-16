@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: edgecase-app
+    restart: unless-stopped
+    ports:
+      - "8800:8800"
+    environment:
+      - NODE_ENV=production
+      - PORT=8800
+      # Firebase client-side config
+      - FIREBASE_API_KEY=${FIREBASE_API_KEY}
+      - FIREBASE_AUTH_DOMAIN=${FIREBASE_AUTH_DOMAIN}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}
+      - FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}
+      - FIREBASE_APP_ID=${FIREBASE_APP_ID}
+      # Firebase Admin (service account JSON as a string)
+      - FIREBASE_SERVICE_ACCOUNT=${FIREBASE_SERVICE_ACCOUNT}
+      # External APIs
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - CODEFORCE_API_KEY=${CODEFORCE_API_KEY}
+      - CODEFORCE_API_SECRET=${CODEFORCE_API_SECRET}
+    volumes:
+      # ⚡ KEY: Mount the host Docker socket so our app can spawn runner containers
+      - /var/run/docker.sock:/var/run/docker.sock
+      # ⚡ KEY: Share /tmp between the app container and the host so volume mounts
+      #        in spawned containers point to real host paths
+      - /tmp:/tmp
+    # Give the app container permission to use the Docker socket
+    group_add:
+      - "${DOCKER_GID:-999}"
