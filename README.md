@@ -1,86 +1,90 @@
-# AI-Powered Competitive Programming Platform
+# 🚀 EdgeCase — AI-Powered Competitive Programming Engine
 
-A modern, fast, and highly secure competitive programming platform built with Node.js and Express. This platform features isolated code execution via an integrated Docker sandbox system and is supercharged with Google Gemini AI to help users analyze their code's performance and generate rigorous edge-test cases automatically.
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://edgecases.duckdns.org)
+[![Docker](https://img.shields.io/badge/Docker-Sandboxed-blue?style=for-the-badge&logo=docker)](https://www.docker.com/)
+[![AWS](https://img.shields.io/badge/Deployed-AWS%20EC2-orange?style=for-the-badge&logo=amazon-aws)](https://aws.amazon.com/)
+[![Gemini](https://img.shields.io/badge/AI-Gemini%20Pro-purple?style=for-the-badge&logo=google-gemini)](https://aistudio.google.com/)
 
-## ✨ Features
+**EdgeCase** is a high-performance, secure competitive programming platform designed for the modern era. Beyond just a judge, it leverages **Generative AI** to act as a personal coach—identifying algorithmic bottlenecks and generating rigorous edge cases that standard judges often miss.
 
-- **Isolated Code Sandboxes**: Execute untrusted user code (C++, Python, Java, C, Rust) safely via Docker containerization with strict cpu/memory timeouts.
-- **AI Code Analyzer**: Built-in Google Gemini engine automatically identifies and breaks down a user's Time Complexity (Big-O), Space Complexity, algorithmic approach, and provides critical optimization advice.
-- **AI Edge Case Generator**: Instantly generate brutal corner-case testing scenarios via generative AI based purely on the problem statement.
-- **Live IDE Environment**: A dark-themed, highly responsive Monaco-based editor matching the visual aesthetic of premium coding environments (like VS Code).
-- **Trending Dashboards**: A live-updating aggregate feed pulling the Top 4 Developer articles from Dev.to and the hottest trending repositories from GitHub.
-- **Authentication**: A secure Firebase authentication module heavily integrated with persistent sessions, allowing personalized coding environments.
-- **Security Protocols**: Armed with `helmet` HTTP headers and `express-rate-limit` middleware, ensuring the Generative AI and execution routes cannot be abused or drained.
+---
+
+## ⚡ Key Technical Features
+
+### 🛡️ Secure Sandboxed Execution
+Most platforms struggle with security; EdgeCase uses a **Docker-in-Docker** architecture. 
+- **Isolation**: Every submission (C++, Python, Java, C, Rust) is executed in a fresh, read-only Docker container.
+- **Resource Constraints**: Strict memory (128MB) and CPU (0.5 vCPUs) limits are enforced at the kernel level.
+- **Networking**: Containers are purged of network access to prevent unauthorized data exfiltration.
+
+### 🧠 AI-Enhanced Analysis
+Powered by the **Gemini 1.5 Flash** model, the platform provides:
+- **Big-O Complexity Analysis**: Deep-dive into Time and Space complexity based on code logic, not just execution time.
+- **Edge Case Generation**: Automatically generates brutal corner-case inputs based on your problem statement to help you debug before submitting.
+- **Optimization Strategy**: Provides actionable advice on algorithmic improvements (e.g., suggesting a Segment Tree over a simple array).
+
+### ☁️ Production-Grade Infrastructure
+Successfully deployed on **AWS EC2** with a robust DevOps pipeline:
+- **Reverse Proxy**: Nginx handles incoming traffic and provides SSL/TLS termination via Certbot.
+- **Socket Communication**: The server communicates with the host Docker daemon via Unix socket mounting, allowing for high-performance container spawning.
+- **Session Management**: Secure, persistent sessions via Firebase and `cookie-parser`.
+
+---
 
 ## 🚀 Tech Stack
 
-- **Backend Framework**: Node.js, Express.js
-- **Frontend Views**: EJS Templating, Vanilla CSS, Monaco Editor
-- **AI Integration**: `@google/generative-ai` (Gemini 2.5 Flash)
-- **Code Runner**: Remote Docker Engined Instances (`child_process` spawn)
-- **Authentication**: Firebase Admin SDK & Firebase Client SDK
-- **Security**: Express Rate Limit, Helmet
+- **Backend**: Node.js, Express.js
+- **Frontend**: EJS, Vanilla CSS, Monaco Editor (VS Code Engine)
+- **AI**: Google Gemini AI (@google/generative-ai)
+- **Database/Auth**: Firebase Admin SDK
+- **Infrastructure**: AWS EC2, Docker, Nginx, Linux (Ubuntu 22.04)
 
-## 🛠️ Installation & Local Setup
+---
+
+## 🛠️ Local Development
 
 ### 1. Prerequisites
-- [Node.js](https://nodejs.org/en/) installed securely on your machine.
-- [Docker Engine](https://www.docker.com/) running locally (required for executing code).
-- A [Firebase Project](https://firebase.google.com/) equipped with Authentication enabled.
-- A [Google Gemini API Key](https://aistudio.google.com/app/apikey).
+- [Node.js v18+](https://nodejs.org/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
+- [Google AI Studio Key](https://aistudio.google.com/app/apikey)
 
-### 2. Clone the Repository
+### 2. Setup
 ```bash
-git clone https://github.com/your-username/repo-name.git
-cd repo-name
-```
-
-### 3. Install Dependencies
-```bash
+git clone https://github.com/Nish-8271/EdgeCase.git
+cd EdgeCase
 npm install
 ```
 
-### 4. Build Sandbox Docker Images
-In order for the platform to execute your compiler queries without downloading images sequentially, you must build the target dependencies within the local Docker registry:
+### 3. Build Runner Images
+We provide a helper script to build all 5 language environments locally:
 ```bash
-# Navigate to your Docker module and run your image builds
-# Example: docker build -t cp-python -f Dockerfile.python .
-# Example: docker build -t cp-cpp -f Dockerfile.cpp .
-# The executing routes expect the tags: cp-python, cp-cpp, cp-java, cp-c, cp-rust
+chmod +x docker/build-images.sh
+./docker/build-images.sh
 ```
 
-### 5. Environment Configuration
-Create a `.env` file in the root of your project:
-```env
-PORT=8800
-
-# Google AI
-GEMINI_API_KEY=your_gemini_api_key
-
-# Firebase (for deployment architecture)
-FIREBASE_SERVICE_ACCOUNT={"type":"service_account","project_id":"..."}
-
-# Frontend Firebase Injection
-FIREBASE_API_KEY=your_api_key
-FIREBASE_AUTH_DOMAIN=your_domain
-FIREBASE_PROJECT_ID=your_id
-FIREBASE_STORAGE_BUCKET=your_bucket
-FIREBASE_MESSAGING_SENDER_ID=your_sender
-FIREBASE_APP_ID=your_app_id
+### 4. Configuration
+Create a `.env` file based on our template:
+```bash
+cp .env.production.example .env
+# Fill in your GEMINI_API_KEY and Firebase credentials
 ```
 
-### 6. Start the Platform
+### 5. Run
 ```bash
-# Start locally using nodemon hot-reload
 npm run dev
-
-# Or boot standard for production
-npm start
 ```
-*Your application will now be running at `http://localhost:8800`*
 
+---
 
-## ☁️ Deployment Requirements (VPS)
+## 🚢 Deployment Guide
 
-Because the Execution architecture utilizes `child_process.spawn('docker run ...')` behind the scenes, this application **cannot be deployed to standard Serverless solutions** (Vercel, standard Heroku Dynos). 
-You **must** deploy this to a Virtual Private Server (AWS EC2, DigitalOcean Droplet, Linode) or a Docker-compatible App Platform where the Docker Daemon is actively running natively to safely cage your executing applications!
+For a full breakdown of how to deploy this to AWS EC2 (including Elastic IP setup, Firewall configuration, and SSL), please refer to our [Deployment Walkthrough](./deploy_guide.md).
+
+---
+
+## 👥 Contributors
+- **Nishant** — Lead Developer & Architect
+
+---
+
+*“Don't just code. Edge-case your code.”*
