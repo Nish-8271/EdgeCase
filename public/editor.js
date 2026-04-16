@@ -125,10 +125,20 @@ function switchLanguage(lang) {
   const model = state.editor.getModel();
   monaco.editor.setModelLanguage(model, MONACO_LANG[lang]);
 
-  // Only replace code if still on default stub (don't overwrite user's work)
+  // Helper to normalize code for comparison
+  const normalize = (s) => (s || "").replace(/\r\n/g, "\n").trim();
+
+  // Only replace code if:
+  // 1. Editor is empty or only whitespace
+  // 2. Current code matches the boilerplate of the PREVIOUS language
   const currentCode = state.editor.getValue();
-  if (currentCode.trim() === DEFAULT_CODE[prev].trim()) {
+  const isCurrentlyEmpty = !currentCode || !currentCode.trim();
+  const isOldDefault = normalize(currentCode) === normalize(DEFAULT_CODE[prev]);
+
+  if (isCurrentlyEmpty || isOldDefault) {
     state.editor.setValue(DEFAULT_CODE[lang]);
+    // Set cursor to start or end of template as desired
+    state.editor.setPosition({ lineNumber: 1, column: 1 });
   }
 
   // Update UI
