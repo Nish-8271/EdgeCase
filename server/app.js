@@ -11,7 +11,10 @@ const helmet = require('helmet');
 const authMiddleware = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
 const problemsRoutes=require('./routes/problems');
-app.use(helmet({ contentSecurityPolicy: false })); // Exclude CSP so our Monaco CDN fonts don't strictly break
+app.use(helmet({ 
+  contentSecurityPolicy: false,
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+})); // Exclude CSP so our Monaco CDN fonts don't strictly break and allow popups for Firebase Auth
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
