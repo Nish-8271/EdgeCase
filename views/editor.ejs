@@ -511,7 +511,7 @@
     <div class="topbar-right">
       <% if (user) { %>
         <span class="user-badge"><%= user.email %></span>
-        <a href="/logout" class="btn-link" style="color: var(--muted); font-size:11px;">logout</a>
+        <a href="/auth/logout" class="btn-link" style="color: var(--muted); font-size:11px;">logout</a>
       <% } else { %>
         <a href="/user/login" class="btn-link">Login to submit</a>
       <% } %>

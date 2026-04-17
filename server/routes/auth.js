@@ -14,6 +14,7 @@ router.post('/session', async (req, res) => {
       httpOnly: true,     // JS can't read it — XSS protection
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 5 * 1000,  // 5 days in ms
+      path: '/',          // Ensures cookie is sent for all routes
     });
 
     res.json({ success: true });
@@ -24,7 +25,7 @@ router.post('/session', async (req, res) => {
 
 // Logout
 router.get('/logout', (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', { path: '/' });
   res.redirect('/');
 });
 
