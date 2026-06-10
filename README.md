@@ -74,13 +74,6 @@ cp .env.production.example .env
 npm run dev
 ```
 
----
-
-## 🚢 Deployment Guide
-
-For a full breakdown of how to deploy this to AWS EC2 (including Elastic IP setup, Firewall configuration, and SSL), please refer to our [Deployment Walkthrough](./deploy_guide.md).
-
----
 
 ## 👥 Contributors
 - **Nishant** — Lead Developer & Architect
